@@ -67,3 +67,17 @@ repository settings (visibility, features, merge buttons, sign-off), `labels`
 - `hashicorp/http` ~> 3.0 (used to detect the owner type for the secret check)
 
 See [`examples/complete`](examples/complete) for a runnable example.
+
+## Related
+
+CI that applies this module authenticates as a GitHub App created by
+[`terraform-github-app`](https://github.com/releasetools/terraform-github-app),
+which stores the `GH_APP_*` credentials a workflow uses to mint the provider
+token.
+
+## Dependency updates
+
+Renovate keeps the Terraform and provider versions current. Its config
+(`renovate.json`) extends the org-wide preset in
+[`releasetools/.github`](https://github.com/releasetools/.github/blob/main/default.json),
+so update policy lives in one place.
