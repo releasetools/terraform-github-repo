@@ -53,7 +53,10 @@ check; then the module needs no secret permissions.
 `github_owner` and `name` are required. Everything else has a default: the
 repository settings (visibility, features, merge buttons, sign-off), `labels`
 (GitHub's stock set, managed authoritatively), `environments`, `allowed_actions`,
-`ruleset_enforcement`, and `required_secrets`. See `variables.tf`.
+`ruleset_enforcement`, and `required_secrets`. The ruleset and Actions are
+toggleable: `manage_ruleset`, `ruleset_require_pull_request`,
+`ruleset_required_signatures`, and `actions_enabled` (all default to the secure
+behavior). See `variables.tf`.
 
 ## Outputs
 

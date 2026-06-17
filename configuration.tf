@@ -25,14 +25,16 @@ resource "github_repository_environment" "this" {
 # Actions runtime policy.
 resource "github_actions_repository_permissions" "this" {
   repository      = github_repository.this.name
-  enabled         = true
+  enabled         = var.actions_enabled
   allowed_actions = var.allowed_actions
 }
 
-# Default-branch ruleset: block deletion and non-fast-forward, require signed
-# commits, require a PR (0 approvals) to update the branch. Set
-# ruleset_enforcement = "disabled" to seed existing history, then "active".
+# Default-branch ruleset: block deletion and non-fast-forward, optionally require
+# signed commits and a PR (0 approvals) to update the branch. Set
+# ruleset_enforcement = "disabled" to seed existing history, then "active"; set
+# manage_ruleset = false to skip the ruleset entirely.
 resource "github_repository_ruleset" "main" {
+  count       = var.manage_ruleset ? 1 : 0
   name        = "main"
   repository  = github_repository.this.name
   target      = "branch"
@@ -48,15 +50,24 @@ resource "github_repository_ruleset" "main" {
   rules {
     deletion            = true
     non_fast_forward    = true
-    required_signatures = true
+    required_signatures = var.ruleset_required_signatures
 
-    pull_request {
-      required_approving_review_count   = 0
-      dismiss_stale_reviews_on_push     = false
-      require_code_owner_review         = false
-      require_last_push_approval        = false
-      required_review_thread_resolution = false
-      allowed_merge_methods             = var.ruleset_allowed_merge_methods
+    dynamic "pull_request" {
+      for_each = var.ruleset_require_pull_request ? [1] : []
+      content {
+        required_approving_review_count   = 0
+        dismiss_stale_reviews_on_push     = false
+        require_code_owner_review         = false
+        require_last_push_approval        = false
+        required_review_thread_resolution = false
+        allowed_merge_methods             = var.ruleset_allowed_merge_methods
+      }
     }
   }
+}
+
+# The ruleset gained a `count` in v0.2.0; keep existing state from recreating it.
+moved {
+  from = github_repository_ruleset.main
+  to   = github_repository_ruleset.main[0]
 }

@@ -185,3 +185,27 @@ variable "ruleset_allowed_merge_methods" {
   type    = list(string)
   default = ["squash", "merge"]
 }
+
+variable "manage_ruleset" {
+  type        = bool
+  default     = true
+  description = "Manage the default-branch ruleset. Set false to skip it entirely (e.g. a bot-only mirror that needs no branch rules)."
+}
+
+variable "ruleset_require_pull_request" {
+  type        = bool
+  default     = true
+  description = "Require a pull request (0 approvals) to update the default branch. Set false to drop the PR rule, e.g. a fast-forward-only mirror."
+}
+
+variable "ruleset_required_signatures" {
+  type        = bool
+  default     = true
+  description = "Require signed commits on the default branch. Set false where commits are unsigned, e.g. a filtered mirror."
+}
+
+variable "actions_enabled" {
+  type        = bool
+  default     = true
+  description = "Enable GitHub Actions on the repo. Set false for a repo that runs no workflows."
+}
